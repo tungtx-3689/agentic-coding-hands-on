@@ -1,0 +1,82 @@
+import { AwardSection } from "@/components/features/award-section";
+import { AwardsLeftNav } from "@/components/features/awards-left-nav";
+import { KudosPromoBlock } from "@/components/features/kudos-promo-block";
+import { PageContainer } from "@/components/layout/page-container";
+import { createClient } from "@/lib/supabase/server";
+import { AWARDS } from "@/lib/data/awards";
+import { getTranslations } from "next-intl/server";
+
+export default async function AwardsPage() {
+  const t = await getTranslations("awards");
+  const supabase = await createClient();
+
+  const { data: topTalent } = await supabase
+    .from("profiles")
+    .select("id, display_name, avatar_url, kudos_received_count")
+    .order("kudos_received_count", { ascending: false })
+    .limit(5);
+
+  const navItems = AWARDS.map((a) => ({
+    id: a.slug,
+    label: t(`categories.${a.slug}` as Parameters<typeof t>[0]),
+  }));
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="py-16 bg-container-2 border-b border-divider">
+        <PageContainer>
+          <h1 className="text-4xl font-bold text-primary text-center tracking-wide">
+            {t("pageTitle")}
+          </h1>
+        </PageContainer>
+      </section>
+
+      {/* 2-col layout */}
+      <PageContainer>
+        <div className="flex gap-16 py-12">
+          {/* Left nav — hidden on mobile */}
+          <aside className="hidden lg:block w-52 shrink-0">
+            <AwardsLeftNav items={navItems} />
+          </aside>
+
+          {/* Award sections */}
+          <div className="flex-1 min-w-0">
+            {AWARDS.map((award) => (
+              <AwardSection key={award.slug} award={award} />
+            ))}
+
+            {/* Top Kudos Talent */}
+            {topTalent && topTalent.length > 0 && (
+              <section className="py-12 border-b border-divider">
+                <h2 className="text-xl font-bold text-primary mb-6">{t("topKudosTitle")}</h2>
+                <div className="flex flex-col gap-2">
+                  {topTalent.map((profile: any, i: number) => (
+                    <div
+                      key={profile.id}
+                      className="flex items-center gap-3 bg-container border border-divider rounded-xl px-4 py-3 hover:border-border transition-colors"
+                    >
+                      <span className="text-sm font-bold text-muted w-6 shrink-0">#{i + 1}</span>
+                      <div className="w-9 h-9 rounded-full bg-divider flex items-center justify-center text-sm font-semibold text-primary overflow-hidden shrink-0">
+                        {profile.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          (profile.display_name ?? "?")[0].toUpperCase()
+                        )}
+                      </div>
+                      <span className="text-sm text-text flex-1 min-w-0 truncate">{profile.display_name}</span>
+                      <span className="text-xs text-muted shrink-0">{profile.kudos_received_count} kudos</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <KudosPromoBlock />
+          </div>
+        </div>
+      </PageContainer>
+    </>
+  );
+}

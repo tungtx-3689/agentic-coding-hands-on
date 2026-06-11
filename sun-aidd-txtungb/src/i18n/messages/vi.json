@@ -1,0 +1,94 @@
+{
+  "nav": {
+    "about": "Về SAA 2025",
+    "awards": "Thông tin giải thưởng",
+    "kudos": "Sun* Kudos"
+  },
+  "login": {
+    "title": "ROOT FURTHER",
+    "welcome": "Chào mừng bạn đến với SAA 2025",
+    "signIn": "Đăng nhập với Google"
+  },
+  "home": {
+    "comingSoon": "Sắp diễn ra",
+    "countdown": {
+      "days": "Ngày",
+      "hours": "Giờ",
+      "minutes": "Phút",
+      "seconds": "Giây"
+    },
+    "eventTime": "18h30",
+    "eventVenue": "Nhà hát nghệ thuật quân đội",
+    "sponsorsTitle": "Đối tác & Nhà tài trợ",
+    "aboutAwards": "VỀ GIẢI THƯỞNG",
+    "aboutKudos": "VỀ KUDOS",
+    "awardsTitle": "Hệ thống giải thưởng",
+    "kudosTitle": "Sun* Kudos",
+    "kudosDesc": "Hệ thống ghi nhận lời cảm ơn",
+    "viewDetail": "Chi tiết"
+  },
+  "awards": {
+    "pageTitle": "Hệ thống giải thưởng SAA 2025",
+    "topKudosTitle": "Top nhận Kudos nhiều nhất",
+    "categories": {
+      "top-talent": "Top Talent",
+      "top-project": "Top Project",
+      "top-project-leader": "Top Project Leader",
+      "best-manager": "Best Manager",
+      "signature-creator": "Signature 2025 - Creator",
+      "mvp": "MVP"
+    }
+  },
+  "kudos": {
+    "pageTitle": "Sun* Kudos",
+    "heroTitle": "Hệ thống ghi nhận lời cảm ơn",
+    "inputPlaceholder": "Gửi lời cảm ơn...",
+    "filterHashtag": "Hashtag",
+    "filterDepartment": "Phòng ban",
+    "highlightTitle": "Nổi bật",
+    "allKudos": "Tất cả Kudos",
+    "spotlight": "Spotlight Board",
+    "viewDetail": "Xem chi tiết",
+    "copyLink": "Sao chép liên kết",
+    "linkCopied": "Đã sao chép liên kết!",
+    "empty": "Hiện tại chưa có Kudos nào.",
+    "openBox": "Mở quà",
+    "newKudos": "{count} Kudo mới",
+    "loadNew": "Xem mới nhất",
+    "stats": {
+      "received": "Kudos nhận được",
+      "sent": "Kudos đã gửi",
+      "hearts": "Tim nhận được",
+      "boxes": "Hộp quà"
+    }
+  },
+  "writeKudo": {
+    "title": "Gửi lời cám ơn và ghi nhận đến đồng đội",
+    "recipient": "Người nhận",
+    "recipientPlaceholder": "Tìm đồng đội...",
+    "contentPlaceholder": "Viết lời cảm ơn...",
+    "mentionHint": "Bạn có thể '@+tên' để nhắc đồng nghiệp",
+    "addHashtag": "+ Hashtag",
+    "addImage": "+ Hình ảnh",
+    "anonymous": "Ẩn danh",
+    "anonymousName": "Tên hiển thị",
+    "cancel": "Hủy",
+    "submit": "Gửi",
+    "errorRecipient": "Vui lòng chọn người nhận",
+    "errorContent": "Vui lòng nhập lời cảm ơn",
+    "uploading": "Đang tải ảnh...",
+    "maxImages": "Tối đa 5 hình ảnh",
+    "maxHashtags": "Tối đa 5 hashtag"
+  },
+  "profile": {
+    "profile": "Trang cá nhân",
+    "signOut": "Đăng xuất",
+    "adminDashboard": "Trang quản trị"
+  },
+  "secretBox": {
+    "title": "Hộp quà bí mật",
+    "unopened": "Bạn có {count} hộp quà chưa mở",
+    "openButton": "Mở hộp quà",
+    "close": "Đóng"
+  }
+}

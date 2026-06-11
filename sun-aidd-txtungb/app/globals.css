@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg:           #00101a;
+  --color-container:    #101417;
+  --color-container-2:  #00070c;
+  --color-primary:      #ffea9e;
+  --color-text:         #ffffff;
+  --color-muted:        #999999;
+  --color-border:       #998c5f;
+  --color-divider:      #2e3940;
+  --color-error:        #b3261e;
+  --color-btn-hover:    #fff8e1;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: #00101a;
+  color: #ffffff;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes heart-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+.animate-heart-pop {
+  animation: heart-pop 300ms ease-out;
+}
+
+@keyframes countdown-tick {
+  0%   { opacity: 1; }
+  30%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.animate-tick {
+  animation: countdown-tick 0.4s ease-in-out;
 }

@@ -1,0 +1,94 @@
+{
+  "nav": {
+    "about": "About SAA 2025",
+    "awards": "Awards Information",
+    "kudos": "Sun* Kudos"
+  },
+  "login": {
+    "title": "ROOT FURTHER",
+    "welcome": "Welcome to SAA 2025",
+    "signIn": "Sign in with Google"
+  },
+  "home": {
+    "comingSoon": "Coming soon",
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
+    },
+    "eventTime": "6:30 PM",
+    "eventVenue": "Military Arts Theatre",
+    "sponsorsTitle": "Partners & Sponsors",
+    "aboutAwards": "ABOUT AWARDS",
+    "aboutKudos": "ABOUT KUDOS",
+    "awardsTitle": "Award System",
+    "kudosTitle": "Sun* Kudos",
+    "kudosDesc": "Recognition and appreciation system",
+    "viewDetail": "Details"
+  },
+  "awards": {
+    "pageTitle": "SAA 2025 Award System",
+    "topKudosTitle": "Top Kudos Receivers",
+    "categories": {
+      "top-talent": "Top Talent",
+      "top-project": "Top Project",
+      "top-project-leader": "Top Project Leader",
+      "best-manager": "Best Manager",
+      "signature-creator": "Signature 2025 - Creator",
+      "mvp": "MVP"
+    }
+  },
+  "kudos": {
+    "pageTitle": "Sun* Kudos",
+    "heroTitle": "Recognition and appreciation system",
+    "inputPlaceholder": "Send appreciation...",
+    "filterHashtag": "Hashtag",
+    "filterDepartment": "Department",
+    "highlightTitle": "Highlights",
+    "allKudos": "All Kudos",
+    "spotlight": "Spotlight Board",
+    "viewDetail": "View detail",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied!",
+    "empty": "No kudos yet.",
+    "openBox": "Open gift",
+    "newKudos": "{count} new Kudos",
+    "loadNew": "Load latest",
+    "stats": {
+      "received": "Kudos received",
+      "sent": "Kudos sent",
+      "hearts": "Hearts received",
+      "boxes": "Gift boxes"
+    }
+  },
+  "writeKudo": {
+    "title": "Send appreciation and recognition to your teammate",
+    "recipient": "Recipient",
+    "recipientPlaceholder": "Search teammate...",
+    "contentPlaceholder": "Write your appreciation...",
+    "mentionHint": "You can '@+name' to mention a colleague",
+    "addHashtag": "+ Hashtag",
+    "addImage": "+ Image",
+    "anonymous": "Anonymous",
+    "anonymousName": "Display name",
+    "cancel": "Cancel",
+    "submit": "Send",
+    "errorRecipient": "Please select a recipient",
+    "errorContent": "Please write your appreciation",
+    "uploading": "Uploading images...",
+    "maxImages": "Maximum 5 images",
+    "maxHashtags": "Maximum 5 hashtags"
+  },
+  "profile": {
+    "profile": "Profile",
+    "signOut": "Sign out",
+    "adminDashboard": "Admin Dashboard"
+  },
+  "secretBox": {
+    "title": "Secret gift box",
+    "unopened": "You have {count} unopened gift boxes",
+    "openButton": "Open gift box",
+    "close": "Close"
+  }
+}
