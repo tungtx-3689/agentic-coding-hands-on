@@ -2,19 +2,13 @@ import { AwardSection } from "@/components/features/award-section";
 import { AwardsLeftNav } from "@/components/features/awards-left-nav";
 import { KudosPromoBlock } from "@/components/features/kudos-promo-block";
 import { PageContainer } from "@/components/layout/page-container";
-import { createClient } from "@/lib/supabase/server";
 import { AWARDS } from "@/lib/data/awards";
+import { getTopProfiles } from "@/lib/db/queries/profiles";
 import { getTranslations } from "next-intl/server";
 
 export default async function AwardsPage() {
   const t = await getTranslations("awards");
-  const supabase = await createClient();
-
-  const { data: topTalent } = await supabase
-    .from("profiles")
-    .select("id, display_name, avatar_url, kudos_received_count")
-    .order("kudos_received_count", { ascending: false })
-    .limit(5);
+  const topTalent = await getTopProfiles(5);
 
   const navItems = AWARDS.map((a) => ({
     id: a.slug,
@@ -23,7 +17,6 @@ export default async function AwardsPage() {
 
   return (
     <>
-      {/* Hero */}
       <section className="py-16 bg-container-2 border-b border-divider">
         <PageContainer>
           <h1 className="text-4xl font-bold text-primary text-center tracking-wide">
@@ -32,26 +25,22 @@ export default async function AwardsPage() {
         </PageContainer>
       </section>
 
-      {/* 2-col layout */}
       <PageContainer>
         <div className="flex gap-16 py-12">
-          {/* Left nav — hidden on mobile */}
           <aside className="hidden lg:block w-52 shrink-0">
             <AwardsLeftNav items={navItems} />
           </aside>
 
-          {/* Award sections */}
           <div className="flex-1 min-w-0">
             {AWARDS.map((award) => (
               <AwardSection key={award.slug} award={award} />
             ))}
 
-            {/* Top Kudos Talent */}
-            {topTalent && topTalent.length > 0 && (
+            {topTalent.length > 0 && (
               <section className="py-12 border-b border-divider">
                 <h2 className="text-xl font-bold text-primary mb-6">{t("topKudosTitle")}</h2>
                 <div className="flex flex-col gap-2">
-                  {topTalent.map((profile: any, i: number) => (
+                  {topTalent.map((profile, i) => (
                     <div
                       key={profile.id}
                       className="flex items-center gap-3 bg-container border border-divider rounded-xl px-4 py-3 hover:border-border transition-colors"

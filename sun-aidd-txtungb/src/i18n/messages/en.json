@@ -55,6 +55,8 @@
     "openBox": "Open gift",
     "newKudos": "{count} new Kudos",
     "loadNew": "Load latest",
+    "loading": "Loading...",
+    "yourStats": "Your stats",
     "stats": {
       "received": "Kudos received",
       "sent": "Kudos sent",

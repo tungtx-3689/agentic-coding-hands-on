@@ -1,7 +1,11 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getSessionUser } from "@/lib/auth/get-session-user";
+import { submitKudo as dbSubmitKudo } from "@/lib/db/queries/kudos";
+import { searchProfiles as dbSearchProfiles } from "@/lib/db/queries/profiles";
+import { getHashtags as dbGetHashtags } from "@/lib/db/queries/hashtags";
+import { toggleHeart as dbToggleHeart } from "@/lib/db/queries/hearts";
 
 export interface SubmitKudoInput {
   receiverId: string;
@@ -13,55 +17,35 @@ export interface SubmitKudoInput {
 }
 
 export async function submitKudo(input: SubmitKudoInput) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getSessionUser();
   if (!user) return { error: "Unauthenticated" };
 
-  const { data: kudo, error: kudoError } = await supabase
-    .from("kudos")
-    .insert({
-      sender_id: user.id,
-      receiver_id: input.receiverId,
-      content: input.content,
-      is_anonymous: input.isAnonymous,
-      anonymous_name: input.isAnonymous ? input.anonymousName ?? null : null,
-    })
-    .select("id")
-    .single();
-
-  if (kudoError || !kudo) return { error: kudoError?.message ?? "Failed" };
-
-  if (input.hashtagIds.length > 0) {
-    await supabase.from("kudo_hashtags").insert(
-      input.hashtagIds.map((hashtagId) => ({ kudo_id: kudo.id, hashtag_id: hashtagId }))
-    );
-  }
-
-  if (input.imageUrls.length > 0) {
-    await supabase.from("kudo_images").insert(
-      input.imageUrls.map((url, i) => ({ kudo_id: kudo.id, url, order_index: i }))
-    );
-  }
+  const { kudoId } = await dbSubmitKudo({
+    senderId: user.id,
+    receiverId: input.receiverId,
+    content: input.content,
+    isAnonymous: input.isAnonymous,
+    anonymousName: input.anonymousName,
+    hashtagIds: input.hashtagIds,
+    imageUrls: input.imageUrls,
+  });
 
   revalidatePath("/kudos");
-  return { kudoId: kudo.id };
+  return { kudoId };
+}
+
+export async function toggleHeartAction(kudoId: string) {
+  const user = await getSessionUser();
+  if (!user) return { error: "Unauthenticated" };
+  const result = await dbToggleHeart(kudoId, user.id);
+  revalidatePath("/kudos");
+  return result;
 }
 
 export async function searchProfiles(query: string) {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("id, display_name, avatar_url")
-    .ilike("display_name", `%${query}%`)
-    .limit(10);
-  return data ?? [];
+  return dbSearchProfiles(query);
 }
 
 export async function getHashtags() {
-  const supabase = await createClient();
-  const { data } = await supabase.from("hashtags").select("id, name").order("name");
-  return data ?? [];
+  return dbGetHashtags();
 }

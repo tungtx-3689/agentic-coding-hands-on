@@ -55,6 +55,8 @@
     "openBox": "Mở quà",
     "newKudos": "{count} Kudo mới",
     "loadNew": "Xem mới nhất",
+    "loading": "Đang tải...",
+    "yourStats": "Của bạn",
     "stats": {
       "received": "Kudos nhận được",
       "sent": "Kudos đã gửi",

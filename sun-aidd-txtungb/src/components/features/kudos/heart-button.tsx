@@ -1,8 +1,8 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { toggleHeartAction } from "@/lib/kudos/actions";
 import { useUser } from "@/lib/hooks/use-user";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface HeartButtonProps {
   kudoId: string;
@@ -26,42 +26,29 @@ export function HeartButton({
   const isSender = user?.id === senderId;
   const disabled = !user || isSender || pending;
 
-  useEffect(() => {
-    try {
-      const supabase = createClient();
-      const ch = supabase
-        .channel(`hearts-${kudoId}`)
-        .on(
-          "postgres_changes" as any,
-          { event: "*", schema: "public", table: "kudo_hearts", filter: `kudo_id=eq.${kudoId}` },
-          async () => {
-            const { count: latest } = await supabase
-              .from("kudo_hearts")
-              .select("*", { count: "exact", head: true } as any)
-              .eq("kudo_id", kudoId);
-            if (latest !== null) setCount(latest);
-          }
-        )
-        .subscribe();
-      return () => { supabase.removeChannel(ch); };
-    } catch { /* not configured */ }
-  }, [kudoId]);
-
   async function toggle() {
     if (disabled) return;
-    const supabase = createClient();
     setPending(true);
 
+    const prevLiked = liked;
+    const prevCount = count;
     if (liked) {
       setLiked(false);
       setCount((c) => c - 1);
-      await supabase.from("kudo_hearts").delete().match({ kudo_id: kudoId, user_id: user!.id });
     } else {
       setLiked(true);
       setCount((c) => c + 1);
       setPopped(true);
       setTimeout(() => setPopped(false), 300);
-      await supabase.from("kudo_hearts").upsert({ kudo_id: kudoId, user_id: user!.id, count: 1 });
+    }
+
+    const result = await toggleHeartAction(kudoId);
+    if ("error" in result) {
+      setLiked(prevLiked);
+      setCount(prevCount);
+    } else {
+      setLiked(result.liked);
+      setCount(result.count);
     }
     setPending(false);
   }

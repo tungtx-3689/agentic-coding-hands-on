@@ -19,7 +19,7 @@ async function fetchKudos(
     .from("kudos")
     .select(
       `id, sender_id, receiver_id, content, is_anonymous, anonymous_name, created_at,
-       sender:profiles!kudos_sender_id_fkey(id, display_name, avatar_url, kudos_received_count),
+       sender:profiles!kudos_sender_id_fkey(id, display_name, avatar_url, department_id, kudos_received_count),
        receiver:profiles!kudos_receiver_id_fkey(id, display_name, avatar_url, kudos_received_count),
        hashtags:kudo_hashtags(hashtag:hashtags(id, name)),
        kudo_hearts(count)`
@@ -34,7 +34,11 @@ async function fetchKudos(
   const { data } = await query;
   if (!data) return [];
 
-  return data.map((row: any) => ({
+  const filtered = departmentId
+    ? data.filter((row: any) => row.sender?.department_id === departmentId)
+    : data;
+
+  return filtered.map((row: any) => ({
     ...row,
     hashtags: (row.hashtags as unknown as { hashtag: Hashtag }[]).map(
       (h) => h.hashtag
@@ -135,7 +139,7 @@ export function KudosFeed({
           onClick={refreshFeed}
           className="w-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium py-2.5 rounded-xl hover:bg-primary/20 transition-colors"
         >
-          {newCount} {t("newKudos", { count: newCount })} · {t("loadNew")}
+          {t("newKudos", { count: newCount })} · {t("loadNew")}
         </button>
       )}
       {kudos.map((kudo) => (
@@ -143,7 +147,7 @@ export function KudosFeed({
       ))}
       <div ref={sentinelRef} className="h-4" />
       {loading && (
-        <div className="text-center text-muted text-sm py-4">Đang tải...</div>
+        <div className="text-center text-muted text-sm py-4">{t("loading")}</div>
       )}
     </div>
   );

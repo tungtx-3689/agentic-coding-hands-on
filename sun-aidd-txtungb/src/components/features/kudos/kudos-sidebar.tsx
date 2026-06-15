@@ -34,7 +34,7 @@ export async function KudosSidebar({ userId }: KudosSidebarProps) {
       {/* Personal stats */}
       <div className="bg-[#101417] border border-[#2e3940] rounded-xl p-5">
         <h3 className="text-[#ffea9e] font-semibold mb-4 text-sm uppercase tracking-widest">
-          Của bạn
+          {t("yourStats")}
         </h3>
         <div className="grid grid-cols-2 gap-3">
           {stats.map(({ label, value }) => (
