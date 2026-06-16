@@ -1,6 +1,7 @@
 import { AwardSection } from "@/components/features/award-section";
 import { AwardsLeftNav } from "@/components/features/awards-left-nav";
 import { KudosPromoBlock } from "@/components/features/kudos-promo-block";
+import { KeyVisualSection } from "@/components/layout/keyvisual-section";
 import { PageContainer } from "@/components/layout/page-container";
 import { AWARDS } from "@/lib/data/awards";
 import { getTopProfiles } from "@/lib/db/queries/profiles";
@@ -17,13 +18,15 @@ export default async function AwardsPage() {
 
   return (
     <>
-      <section className="py-16 bg-container-2 border-b border-divider">
+      <KeyVisualSection>
         <PageContainer>
-          <h1 className="text-4xl font-bold text-primary text-center tracking-wide">
-            {t("pageTitle")}
-          </h1>
+          <div className="py-16 text-center">
+            <h1 className="text-4xl font-bold text-primary tracking-wide">
+              {t("pageTitle")}
+            </h1>
+          </div>
         </PageContainer>
-      </section>
+      </KeyVisualSection>
 
       <PageContainer>
         <div className="flex gap-16 py-12">

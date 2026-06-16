@@ -33,13 +33,14 @@ export function Navbar({ user }: NavbarProps) {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-20 bg-[#00101a] z-50 border-b border-[#2e3940]">
+    <header className="fixed top-0 left-0 right-0 h-20 bg-[#0B0F12]/20 backdrop-blur-sm z-50 border-b border-divider">
       <div className="max-w-[1512px] mx-auto px-36 max-md:px-6 h-full flex items-center justify-between">
         <Link
           href="/"
-          className="text-[#ffea9e] font-bold text-xl tracking-widest uppercase shrink-0"
+          className="flex items-center gap-2 shrink-0"
         >
-          SAA 2025
+          <span className="text-primary font-bold text-xl tracking-widest uppercase">SAA 2025</span>
+          <img src="/aidd-logo.png" alt="Sun*" className="h-8 w-auto" />
         </Link>
 
         <nav className="flex items-center gap-8">
@@ -52,8 +53,8 @@ export function Navbar({ user }: NavbarProps) {
                 onClick={(e) => handleNavClick(e, href)}
                 className={`text-sm font-medium transition-colors ${
                   isActive
-                    ? "text-[#ffea9e] underline underline-offset-4"
-                    : "text-white hover:text-[#ffea9e]"
+                    ? "text-primary underline underline-offset-4"
+                    : "text-white hover:text-primary"
                 }`}
               >
                 {t(key)}

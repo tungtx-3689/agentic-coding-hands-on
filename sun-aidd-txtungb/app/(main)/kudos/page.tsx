@@ -1,6 +1,7 @@
 import { KudosTabs } from "@/components/features/kudos/kudos-tabs";
 import { KudosSidebar } from "@/components/features/kudos/kudos-sidebar";
 import { KudosHighlightCarousel } from "@/components/features/kudos/kudos-highlight-carousel";
+import { KeyVisualSection } from "@/components/layout/keyvisual-section";
 import { PageContainer } from "@/components/layout/page-container";
 import { WidgetButton } from "@/components/ui/widget-button";
 import { getSessionUser } from "@/lib/auth/get-session-user";
@@ -26,16 +27,16 @@ export default async function KudosPage() {
 
   return (
     <>
-      <section className="bg-bg border-b border-divider py-14">
+      <KeyVisualSection>
         <PageContainer>
-          <div className="flex flex-col items-center text-center gap-3">
+          <div className="py-14 flex flex-col items-center text-center gap-3">
             <h1 className="text-4xl font-bold text-primary tracking-wide">
               {t("heroTitle")}
             </h1>
             <p className="text-muted text-sm">{t("pageTitle")}</p>
           </div>
         </PageContainer>
-      </section>
+      </KeyVisualSection>
 
       {initialKudos.length > 0 && (
         <div className="border-b border-divider">

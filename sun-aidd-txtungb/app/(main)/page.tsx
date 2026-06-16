@@ -2,6 +2,7 @@ import { AwardsGrid } from "@/components/features/awards-grid";
 import { CountdownTimer } from "@/components/features/countdown-timer";
 import { KudosPromoBlock } from "@/components/features/kudos-promo-block";
 import { SponsorsSection } from "@/components/features/sponsors-section";
+import { KeyVisualSection } from "@/components/layout/keyvisual-section";
 import { PageContainer } from "@/components/layout/page-container";
 import { WidgetButton } from "@/components/ui/widget-button";
 import { getTranslations } from "next-intl/server";
@@ -12,8 +13,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero section */}
-      <section className="bg-bg border-b border-divider">
+      {/* Hero section with keyvisual background */}
+      <KeyVisualSection>
         <PageContainer>
           <div className="py-24 flex flex-col items-center text-center gap-8">
             <h1 className="text-6xl md:text-8xl font-bold text-primary tracking-widest">
@@ -42,7 +43,7 @@ export default async function HomePage() {
             </div>
           </div>
         </PageContainer>
-      </section>
+      </KeyVisualSection>
 
       {/* Root Further content */}
       <section className="py-20 bg-container-2">

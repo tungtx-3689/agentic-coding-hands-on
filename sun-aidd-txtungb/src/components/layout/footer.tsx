@@ -5,7 +5,7 @@ export default async function Footer() {
   const t = await getTranslations("nav");
 
   return (
-    <footer className="bg-[#00101a] border-t border-[#2e3940]">
+    <footer className="bg-[#0B0F12]/20 border-t border-divider">
       <div className="max-w-[1512px] mx-auto px-36 max-md:px-6 py-12 flex flex-col items-center gap-6">
         <span className="text-[#ffea9e] font-bold text-xl tracking-widest uppercase">
           SAA 2025
