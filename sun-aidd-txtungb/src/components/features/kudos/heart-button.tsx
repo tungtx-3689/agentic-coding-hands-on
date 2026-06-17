@@ -9,6 +9,7 @@ interface HeartButtonProps {
   senderId: string;
   initialCount: number;
   initialLiked: boolean;
+  variant?: "dark" | "light";
 }
 
 export function HeartButton({
@@ -16,6 +17,7 @@ export function HeartButton({
   senderId,
   initialCount,
   initialLiked,
+  variant = "dark",
 }: HeartButtonProps) {
   const { user } = useUser();
   const [liked, setLiked] = useState(initialLiked);
@@ -53,13 +55,20 @@ export function HeartButton({
     setPending(false);
   }
 
+  const colorClass =
+    variant === "light"
+      ? liked
+        ? "text-[#00101a]"
+        : "text-[#999999] hover:text-[#00101a]"
+      : liked
+      ? "text-primary"
+      : "text-muted hover:text-primary";
+
   return (
     <button
       onClick={toggle}
       disabled={disabled}
-      className={`flex items-center gap-1.5 text-sm transition-colors ${
-        liked ? "text-primary" : "text-muted hover:text-primary"
-      } disabled:opacity-40 disabled:cursor-not-allowed`}
+      className={`flex items-center gap-1.5 text-sm transition-colors ${colorClass} disabled:opacity-40 disabled:cursor-not-allowed`}
       aria-label={liked ? "Unlike" : "Like"}
     >
       <svg

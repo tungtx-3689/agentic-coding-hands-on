@@ -67,6 +67,7 @@ export const kudos = sqliteTable("kudos", {
   id: text("id").primaryKey(),
   senderId: text("sender_id").notNull().references(() => profiles.id),
   receiverId: text("receiver_id").notNull().references(() => profiles.id),
+  title: text("title"),
   content: text("content").notNull(),
   isAnonymous: integer("is_anonymous", { mode: "boolean" }).default(false).notNull(),
   anonymousName: text("anonymous_name"),
@@ -106,6 +107,13 @@ export const secretBoxes = sqliteTable("secret_boxes", {
   openedAt: text("opened_at"),
   rewardDescription: text("reward_description"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const userTitleCache = sqliteTable("user_title_cache", {
+  userId: text("user_id").primaryKey().references(() => profiles.id, { onDelete: "cascade" }),
+  title: text("title"),
+  uniqueSendersCount: integer("unique_senders_count").default(0).notNull(),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const awards = sqliteTable("awards", {

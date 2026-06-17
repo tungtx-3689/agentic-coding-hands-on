@@ -1,7 +1,6 @@
 "use client";
 
 import { submitKudo } from "@/lib/kudos/actions";
-import { createClient } from "@/lib/supabase/client";
 import type { Hashtag } from "@/lib/types";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -21,6 +20,7 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
   const router = useRouter();
 
   const [recipient, setRecipient] = useState<Profile | null>(null);
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -31,7 +31,7 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const isValid = !!recipient && content.trim().length > 0;
+  const isValid = !!recipient && title.trim().length > 0 && content.trim().length > 0;
 
   useEffect(() => {
     return () => previews.forEach((url) => URL.revokeObjectURL(url));
@@ -49,20 +49,18 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   }
 
-  async function uploadImages(): Promise<string[]> {
-    if (!images.length) return [];
-    const supabase = createClient();
-    const urls: string[] = [];
-    for (const file of images) {
-      const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: uploadErr } = await supabase.storage.from("kudo-images").upload(path, file);
-      if (!uploadErr) {
-        const { data } = supabase.storage.from("kudo-images").getPublicUrl(path);
-        urls.push(data.publicUrl);
-      }
-    }
-    return urls;
+  async function imagesToBase64(): Promise<string[]> {
+    return Promise.all(
+      images.map(
+        (file) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          })
+      )
+    );
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -72,10 +70,11 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
     setPending(true);
     setError(null);
 
-    const imageUrls = await uploadImages();
+    const imageUrls = await imagesToBase64();
 
     const result = await submitKudo({
       receiverId: recipient!.id,
+      title: title.trim() || undefined,
       content: content.trim(),
       hashtagIds: selectedHashtags,
       imageUrls,
@@ -100,6 +99,23 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
         <RecipientSelector value={recipient} onChange={setRecipient} />
         {submitAttempted && !recipient && (
           <p className="text-xs text-error">{t("errorRecipient")}</p>
+        )}
+      </div>
+
+      {/* Title */}
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-muted">Tiêu đề Kudos <span className="text-error">*</span></label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Nhập tiêu đề ngắn gọn..."
+          className={`w-full bg-container-2 border rounded-lg px-4 py-2.5 text-sm text-text placeholder:text-muted outline-none transition-colors ${
+            submitAttempted && !title.trim() ? "border-error" : "border-divider focus:border-border"
+          }`}
+        />
+        {submitAttempted && !title.trim() && (
+          <p className="text-xs text-error">Vui lòng nhập tiêu đề Kudos</p>
         )}
       </div>
 
@@ -204,7 +220,7 @@ export function WriteKudoForm({ hashtags }: WriteKudoFormProps) {
           disabled={!isValid || pending}
           className="flex-1 bg-primary text-bg font-semibold rounded-full py-3 text-sm hover:bg-btn-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {pending ? (images.length > 0 ? t("uploading") : "Đang gửi...") : t("submit")}
+          {pending ? "Đang gửi..." : t("submit")}
         </button>
       </div>
     </form>

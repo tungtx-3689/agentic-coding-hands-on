@@ -2,12 +2,13 @@ interface KeyVisualSectionProps {
   children: React.ReactNode;
   className?: string;
   fullScreen?: boolean;
+  banner?: boolean;
 }
 
-export function KeyVisualSection({ children, className = "", fullScreen = false }: KeyVisualSectionProps) {
+export function KeyVisualSection({ children, className = "", fullScreen = false, banner = false }: KeyVisualSectionProps) {
   return (
     <div
-      className={`relative overflow-hidden ${fullScreen ? "min-h-screen flex flex-col" : ""} ${className}`}
+      className={`relative overflow-hidden ${fullScreen ? "min-h-screen flex flex-col" : ""} ${banner ? "h-[220px]" : ""} ${className}`}
       style={{
         backgroundImage: "url('/aidd-keyvisual.png')",
         backgroundSize: "cover",
@@ -18,7 +19,7 @@ export function KeyVisualSection({ children, className = "", fullScreen = false 
       {/* Fade to system bg at bottom */}
       {!fullScreen && (
         <div
-          className="absolute inset-x-0 bottom-0 h-48 pointer-events-none"
+          className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
           style={{ background: "linear-gradient(to bottom, transparent 0%, #00101a 100%)" }}
         />
       )}

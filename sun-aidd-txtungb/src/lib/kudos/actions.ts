@@ -9,6 +9,7 @@ import { toggleHeart as dbToggleHeart } from "@/lib/db/queries/hearts";
 
 export interface SubmitKudoInput {
   receiverId: string;
+  title?: string;
   content: string;
   hashtagIds: string[];
   imageUrls: string[];
@@ -23,6 +24,7 @@ export async function submitKudo(input: SubmitKudoInput) {
   const { kudoId } = await dbSubmitKudo({
     senderId: user.id,
     receiverId: input.receiverId,
+    title: input.title,
     content: input.content,
     isAnonymous: input.isAnonymous,
     anonymousName: input.anonymousName,

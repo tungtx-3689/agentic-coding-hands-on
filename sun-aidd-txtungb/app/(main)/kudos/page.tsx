@@ -29,11 +29,10 @@ export default async function KudosPage() {
     <>
       <KeyVisualSection>
         <PageContainer>
-          <div className="py-14 flex flex-col items-center text-center gap-3">
-            <h1 className="text-4xl font-bold text-primary tracking-wide">
-              {t("heroTitle")}
-            </h1>
-            <p className="text-muted text-sm">{t("pageTitle")}</p>
+          <div className="py-6 flex flex-col items-start gap-2">
+            <p className="text-primary font-bold text-base">{t("heroTitle")}</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/aidd-kudos-logo.png" alt="Sun* Kudos" className="h-14 w-auto" />
           </div>
         </PageContainer>
       </KeyVisualSection>
@@ -42,7 +41,7 @@ export default async function KudosPage() {
         <div className="border-b border-divider">
           <PageContainer>
             <div className="py-6">
-              <KudosHighlightCarousel kudos={initialKudos.slice(0, 5)} />
+              <KudosHighlightCarousel kudos={initialKudos.slice(0, 5)} currentUserId={user?.id} />
             </div>
           </PageContainer>
         </div>

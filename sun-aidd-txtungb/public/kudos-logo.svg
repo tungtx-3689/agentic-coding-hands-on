@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" fill="none">
+  <!-- Paper-plane send icon -->
+  <path d="M6 54L52 32L6 10V24L38 32L6 40V54Z" fill="#FFEA9E"/>
+  <!-- Sun* wordmark -->
+  <text x="64" y="24" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFEA9E" letter-spacing="4">SUN*</text>
+  <!-- Kudos wordmark -->
+  <text x="64" y="52" font-family="Arial, sans-serif" font-size="26" font-weight="800" fill="#FFEA9E" letter-spacing="2">KUDOS</text>
+</svg>

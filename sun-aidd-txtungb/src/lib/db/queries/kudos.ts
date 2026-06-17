@@ -10,12 +10,13 @@ import {
 import type { Kudo } from "@/lib/types";
 import { randomUUID } from "crypto";
 import {
-  mapProfile,
   fetchKudoHashtags,
+  fetchKudoImages,
   fetchHeartCount,
   fetchUserHasLiked,
   fetchProfile,
 } from "./kudo-helpers";
+import { updateUserTitle } from "./titles";
 
 interface GetKudosOpts {
   page: number;
@@ -52,21 +53,8 @@ export async function getKudos(opts: GetKudosOpts): Promise<Kudo[]> {
   }
 
   const rows = await db
-    .select({
-      kudo: kudos,
-      sender: {
-        id: profiles.id,
-        displayName: profiles.displayName,
-        avatarUrl: profiles.avatarUrl,
-        departmentId: profiles.departmentId,
-        role: profiles.role,
-        kudosReceivedCount: profiles.kudosReceivedCount,
-        kudosSentCount: profiles.kudosSentCount,
-        heartsReceivedCount: profiles.heartsReceivedCount,
-      },
-    })
+    .select({ kudo: kudos })
     .from(kudos)
-    .leftJoin(profiles, eq(kudos.senderId, profiles.id))
     .where(filters.length > 0 ? and(...filters) : undefined)
     .orderBy(desc(kudos.createdAt))
     .limit(pageSize)
@@ -75,9 +63,11 @@ export async function getKudos(opts: GetKudosOpts): Promise<Kudo[]> {
   const results: Kudo[] = [];
   for (const row of rows) {
     const kudoId = row.kudo.id;
-    const [tags, heartCount, receiver] = await Promise.all([
+    const [tags, images, heartCount, sender, receiver] = await Promise.all([
       fetchKudoHashtags(kudoId),
+      fetchKudoImages(kudoId),
       fetchHeartCount(kudoId),
+      fetchProfile(row.kudo.senderId),
       fetchProfile(row.kudo.receiverId),
     ]);
     const userHasLiked = currentUserId
@@ -88,15 +78,15 @@ export async function getKudos(opts: GetKudosOpts): Promise<Kudo[]> {
       id: row.kudo.id,
       sender_id: row.kudo.senderId,
       receiver_id: row.kudo.receiverId,
+      title: row.kudo.title,
       content: row.kudo.content,
       is_anonymous: row.kudo.isAnonymous,
       anonymous_name: row.kudo.anonymousName,
       created_at: row.kudo.createdAt,
-      sender: row.sender?.id
-        ? mapProfile(row.sender as Parameters<typeof mapProfile>[0])
-        : undefined,
+      sender: sender ?? undefined,
       receiver: receiver ?? undefined,
       hashtags: tags,
+      images,
       heart_count: heartCount,
       user_has_liked: userHasLiked,
     });
@@ -105,9 +95,43 @@ export async function getKudos(opts: GetKudosOpts): Promise<Kudo[]> {
   return results;
 }
 
+export async function getKudoById(id: string, currentUserId?: string | null): Promise<Kudo | null> {
+  const rows = await db.select({ kudo: kudos }).from(kudos).where(eq(kudos.id, id)).limit(1);
+  if (!rows[0]) return null;
+  const row = rows[0];
+  const kudoId = row.kudo.id;
+
+  const [tags, images, heartCount, sender, receiver] = await Promise.all([
+    fetchKudoHashtags(kudoId),
+    fetchKudoImages(kudoId),
+    fetchHeartCount(kudoId),
+    fetchProfile(row.kudo.senderId),
+    fetchProfile(row.kudo.receiverId),
+  ]);
+  const userHasLiked = currentUserId ? await fetchUserHasLiked(kudoId, currentUserId) : false;
+
+  return {
+    id: row.kudo.id,
+    sender_id: row.kudo.senderId,
+    receiver_id: row.kudo.receiverId,
+    title: row.kudo.title,
+    content: row.kudo.content,
+    is_anonymous: row.kudo.isAnonymous,
+    anonymous_name: row.kudo.anonymousName,
+    created_at: row.kudo.createdAt,
+    sender: sender ?? undefined,
+    receiver: receiver ?? undefined,
+    hashtags: tags,
+    images,
+    heart_count: heartCount,
+    user_has_liked: userHasLiked,
+  };
+}
+
 interface SubmitKudoInput {
   senderId: string;
   receiverId: string;
+  title?: string;
   content: string;
   isAnonymous: boolean;
   anonymousName?: string;
@@ -124,6 +148,7 @@ export async function submitKudo(
     id: kudoId,
     senderId: input.senderId,
     receiverId: input.receiverId,
+    title: input.title ?? null,
     content: input.content,
     isAnonymous: input.isAnonymous,
     anonymousName: input.anonymousName ?? null,
@@ -155,6 +180,8 @@ export async function submitKudo(
     .update(profiles)
     .set({ kudosReceivedCount: sql`${profiles.kudosReceivedCount} + 1` })
     .where(eq(profiles.id, input.receiverId));
+
+  await updateUserTitle(input.receiverId);
 
   return { kudoId };
 }

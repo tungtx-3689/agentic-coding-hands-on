@@ -7,6 +7,8 @@ export interface Profile {
   kudos_received_count: number;
   kudos_sent_count: number;
   hearts_received_count: number;
+  department_name?: string | null;
+  title?: string | null;
 }
 
 export interface Department {
@@ -30,6 +32,7 @@ export interface Kudo {
   id: string;
   sender_id: string;
   receiver_id: string;
+  title?: string | null;
   content: string;
   is_anonymous: boolean;
   anonymous_name: string | null;

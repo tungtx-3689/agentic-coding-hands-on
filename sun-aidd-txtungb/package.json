@@ -10,7 +10,11 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/lib/db/migrate.ts",
     "db:seed": "tsx src/lib/db/seed.ts",
-    "db:setup": "npm run db:generate && npm run db:migrate && npm run db:seed"
+    "db:setup": "npm run db:generate && npm run db:migrate && npm run db:seed",
+    "db:import": "tsx src/lib/db/import-assets.ts",
+    "db:generate-images": "tsx src/lib/db/generate-images.ts",
+    "db:compute-titles": "tsx src/lib/db/compute-titles.ts",
+    "db:expand": "tsx src/lib/db/expand-seed.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",

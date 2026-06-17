@@ -1,67 +1,127 @@
 "use client";
 
+import { KudoCard } from "@/components/features/kudos/kudo-card";
 import type { Kudo } from "@/lib/types";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { useRef, useState, useEffect } from "react";
 
 interface KudosHighlightCarouselProps {
   kudos: Kudo[];
+  currentUserId?: string;
 }
 
-export function KudosHighlightCarousel({ kudos }: KudosHighlightCarouselProps) {
+export function KudosHighlightCarousel({ kudos, currentUserId }: KudosHighlightCarouselProps) {
   const t = useTranslations("kudos");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(true);
+
+  const isDragging = useRef(false);
+  const lastX = useRef(0);
+  const lastTime = useRef(0);
+  const velocityPx = useRef(0); // pixels per 60fps frame
+  const rafId = useRef(0);
 
   if (!kudos.length) return null;
+
+  const updateFades = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setShowLeftFade(el.scrollLeft > 8);
+    setShowRightFade(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
+  };
+
+  const applyMomentum = (v: number) => {
+    let vel = v;
+    const step = () => {
+      const el = scrollRef.current;
+      if (!el || Math.abs(vel) < 0.5) {
+        updateFades();
+        return;
+      }
+      el.scrollLeft += vel;
+      vel *= 0.95; // iOS-like deceleration (~0.997/ms at 60fps)
+      updateFades();
+      rafId.current = requestAnimationFrame(step);
+    };
+    rafId.current = requestAnimationFrame(step);
+  };
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    cancelAnimationFrame(rafId.current);
+    isDragging.current = true;
+    velocityPx.current = 0;
+    lastX.current = e.pageX;
+    lastTime.current = performance.now();
+    if (scrollRef.current) scrollRef.current.style.cursor = "grabbing";
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    e.preventDefault();
+
+    const x = e.pageX;
+    const now = performance.now();
+    const dt = now - lastTime.current;
+    const dx = x - lastX.current;
+
+    scrollRef.current.scrollLeft -= dx;
+    updateFades();
+
+    // Track velocity: pixels per frame at 60fps
+    if (dt > 0 && dt < 100) {
+      velocityPx.current = (-dx / dt) * 16.67;
+    }
+
+    lastX.current = x;
+    lastTime.current = now;
+  };
+
+  const stopDrag = () => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    if (scrollRef.current) scrollRef.current.style.cursor = "grab";
+    applyMomentum(velocityPx.current);
+  };
+
+  useEffect(() => {
+    updateFades();
+    return () => cancelAnimationFrame(rafId.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kudos]);
 
   return (
     <section>
       <h2 className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">
         {t("highlightTitle")}
       </h2>
-      <div
-        className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {kudos.map((kudo) => {
-          const sender = kudo.is_anonymous
-            ? (kudo.anonymous_name ?? "Ẩn danh")
-            : (kudo.sender?.display_name ?? "Unknown");
-          const receiver = kudo.receiver?.display_name ?? "Unknown";
-
-          return (
-            <Link
-              key={kudo.id}
-              href={`/kudos/${kudo.id}`}
-              className="w-64 shrink-0 snap-start bg-container border border-divider hover:border-border rounded-xl p-4 flex flex-col gap-2 transition-colors"
-            >
-              <div className="flex items-center justify-between text-xs text-muted">
-                <span className="truncate max-w-[45%]">{sender}</span>
-                <span className="shrink-0 px-1">→</span>
-                <span className="truncate max-w-[45%] text-right">{receiver}</span>
-              </div>
-              <p className="text-sm text-text line-clamp-3 leading-relaxed flex-1">
-                {kudo.content}
-              </p>
-              <div className="flex items-center justify-between mt-auto">
-                {kudo.hashtags && kudo.hashtags.length > 0 && (
-                  <div className="flex gap-1.5 flex-wrap">
-                    {kudo.hashtags.slice(0, 2).map((tag) => (
-                      <span key={tag.id} className="text-xs text-primary">#{tag.name}</span>
-                    ))}
-                  </div>
-                )}
-                {(kudo.heart_count ?? 0) > 0 && (
-                  <div className="flex items-center gap-1 text-xs text-muted ml-auto">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                    <span>{kudo.heart_count}</span>
-                  </div>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+      <div className="relative">
+        {showLeftFade && (
+          <div className="pointer-events-none absolute left-0 top-0 bottom-3 w-16 z-10 bg-gradient-to-r from-[var(--color-bg)] to-transparent" />
+        )}
+        {showRightFade && (
+          <div className="pointer-events-none absolute right-0 top-0 bottom-3 w-16 z-10 bg-gradient-to-l from-[var(--color-bg)] to-transparent" />
+        )}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-3 select-none"
+          style={{
+            scrollbarWidth: "none",
+            WebkitOverflowScrolling: "touch",
+            cursor: "grab",
+          }}
+          onScroll={updateFades}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={stopDrag}
+          onMouseLeave={stopDrag}
+        >
+          {kudos.map((kudo) => (
+            <div key={kudo.id} className="w-[360px] shrink-0">
+              <KudoCard kudo={kudo} currentUserId={currentUserId} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

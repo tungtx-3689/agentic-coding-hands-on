@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { profiles } from "@/lib/db/schema";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt" },
   providers: [
     Credentials({

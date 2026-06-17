@@ -3,27 +3,26 @@ import { AwardsLeftNav } from "@/components/features/awards-left-nav";
 import { KudosPromoBlock } from "@/components/features/kudos-promo-block";
 import { KeyVisualSection } from "@/components/layout/keyvisual-section";
 import { PageContainer } from "@/components/layout/page-container";
-import { AWARDS } from "@/lib/data/awards";
+import { getAwards } from "@/lib/db/queries/awards";
 import { getTopProfiles } from "@/lib/db/queries/profiles";
 import { getTranslations } from "next-intl/server";
 
 export default async function AwardsPage() {
   const t = await getTranslations("awards");
-  const topTalent = await getTopProfiles(5);
+  const [awards, topTalent] = await Promise.all([getAwards(), getTopProfiles(5)]);
 
-  const navItems = AWARDS.map((a) => ({
+  const navItems = awards.map((a) => ({
     id: a.slug,
     label: t(`categories.${a.slug}` as Parameters<typeof t>[0]),
   }));
 
   return (
     <>
-      <KeyVisualSection>
+      <KeyVisualSection banner>
         <PageContainer>
-          <div className="py-16 text-center">
-            <h1 className="text-4xl font-bold text-primary tracking-wide">
-              {t("pageTitle")}
-            </h1>
+          <div className="pt-8 pb-4 flex flex-col items-start gap-1">
+            <p className="text-xs font-semibold text-primary uppercase tracking-widest">SAA 2025</p>
+            <h1 className="text-3xl font-bold text-primary tracking-wide">{t("pageTitle")}</h1>
           </div>
         </PageContainer>
       </KeyVisualSection>
@@ -35,7 +34,7 @@ export default async function AwardsPage() {
           </aside>
 
           <div className="flex-1 min-w-0">
-            {AWARDS.map((award) => (
+            {awards.map((award) => (
               <AwardSection key={award.slug} award={award} />
             ))}
 
